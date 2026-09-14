@@ -1,1 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Play Music — Modern Web Music Player & Streamer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient Gradient Orbs Background -->
+  <div class="ambient-background">
+    <div class="glow-orb orb-purple"></div>
+    <div class="glow-orb orb-cyan"></div>
+    <div class="glow-orb orb-pink"></div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- App Wrapper -->
+  <div class="app-layout">
+    <!-- Top Navigation Header -->
+    <header class="navbar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="6 3 20 12 6 21 6 3" fill="currentColor"></polygon>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Play <span>Music</span></h1>
+        </div>
+      </div>
+
+      <!-- Center Navigation Tabs -->
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab active" data-tab="now-playing" title="Now Playing Deck">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          <span>Now Playing</span>
+        </button>
+        <button class="nav-tab" data-tab="explore" title="Browse Trending Music">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path>
+          </svg>
+          <span>Explore Trending</span>
+        </button>
+        <button class="nav-tab" data-tab="search" title="Search Global Music">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <span>Search Online</span>
+        </button>
+        <button class="nav-tab" data-tab="library" title="My Library & Local Files">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18V5l12-2v13"></path>
+            <circle cx="6" cy="18" r="3"></circle>
+            <circle cx="18" cy="16" r="3"></circle>
+          </svg>
+          <span>Library</span>
+          <span id="tab-library-badge" class="tab-badge">3</span>
+        </button>
+        <button class="nav-tab" data-tab="history" title="Listening History">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <span>History</span>
+          <span id="tab-history-badge" class="tab-badge">0</span>
+        </button>
+      </nav>
+
+      <!-- Right Header Actions -->
+      <div class="nav-actions">
+        <!-- User Account / Login Button -->
+        <button id="auth-nav-btn" class="btn-action user-profile-btn" title="User Account & Login">
+          <span class="user-avatar-icon" id="nav-user-avatar">👤</span>
+          <span id="nav-user-name">Sign In</span>
+        </button>
+
+        <!-- Owner Notifications & Admin Panel -->
+        <button id="owner-badge-btn" class="icon-action-btn owner-btn" title="Owner Admin Dashboard (Sanjeet) — View Logged-in Users & Alerts">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+          </svg>
+          <span id="owner-alert-count" class="alert-badge hidden">0</span>
+        </button>
+
+        <button id="contact-btn" class="btn-action ghost" title="Contact Us & Feedback">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span>Contact Us</span>
+        </button>
+
+        <label for="file-upload-input" class="btn-action upload-action" title="Add local audio files">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span>Add Songs</span>
+        </label>
+        <input type="file" id="file-upload-input" multiple accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac" style="display: none;">
+
+        <button id="visualizer-toggle" class="btn-action ghost" title="Cycle visualizer style">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"></line>
+            <line x1="12" y1="20" x2="12" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="14"></line>
+          </svg>
+          <span id="visualizer-mode-label">Visualizer: Bars</span>
+        </button>
+
+        <button id="keyboard-help-btn" class="icon-action-btn" title="Keyboard Shortcuts">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+            <path d="M6 8h.001M10 8h.001M14 8h.001M18 8h.001M8 12h.001M12 12h.001M16 12h.001M7 16h10"></path>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-viewport">
+      <!-- ============================================== -->
+      <!-- VIEW 1: NOW PLAYING DECK                       -->
+      <!-- ============================================== -->
+      <section id="view-now-playing" class="tab-view active">
+        <div class="deck-container">
+          <!-- Turntable & Audio Visualizer Presentation -->
+          <div class="stage-wrapper">
+            <canvas id="visualizer-canvas"></canvas>
+            <div class="turntable" id="turntable">
+              <div class="turntable-grooves"></div>
+              <div class="center-art" id="center-art">
+                <span id="cover-art-emoji">🎵</span>
+                <img id="album-art-img" class="cover-image hidden" alt="Album Cover">
+              </div>
+              <div class="spindle-hole"></div>
+            </div>
+            <div class="deck-badge" id="deck-badge">
+              <div class="pulse-bars">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <span id="status-indicator">PAUSED</span>
+            </div>
+          </div>
+
+          <!-- Track Metadata -->
+          <div class="now-playing-meta">
+            <h2 id="deck-track-title" class="track-headline">Neon Horizon</h2>
+            <p id="deck-track-artist" class="track-subline">AuraSynth Collective</p>
+            <div class="tags-cluster">
+              <span id="deck-track-genre" class="tag-pill">Synthwave / Retro</span>
+              <span id="deck-track-format" class="tag-pill accent">Procedural WAV</span>
+              <button id="online-autoplay-toggle" class="tag-pill toggle-active" title="Toggle: If playing online music, next song will automatically be from online (not from library)">
+                <span class="live-dot"></span>
+                <span id="online-autoplay-label">Online Next: ON</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Progress Scrubber -->
+          <div class="scrubber-box">
+            <div class="time-row">
+              <span id="time-current">0:00</span>
+              <span id="time-total">0:00</span>
+            </div>
+            <div class="scrubber-track" id="progress-wrapper">
+              <div class="scrubber-bg">
+                <div class="scrubber-fill" id="progress-fill"></div>
+                <div class="scrubber-thumb" id="progress-handle"></div>
+              </div>
+              <div class="seek-balloon" id="seek-tooltip">0:00</div>
+            </div>
+          </div>
+
+          <!-- Primary Control Deck -->
+          <div class="controls-deck">
+            <button id="shuffle-btn" class="deck-btn sub" title="Shuffle (S)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path>
+              </svg>
+            </button>
+
+            <button id="prev-btn" class="deck-btn step" title="Previous (P / ←)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="19 20 9 12 19 4 19 20"></polygon>
+                <line x1="5" y1="19" x2="5" y2="5"></line>
+              </svg>
+            </button>
+
+            <button id="play-pause-btn" class="deck-btn master-play" title="Play / Pause (Space)">
+              <svg id="play-icon" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+              <svg id="pause-icon" class="hidden" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                <rect x="6" y="4" width="4" height="16"></rect>
+                <rect x="14" y="4" width="4" height="16"></rect>
+              </svg>
+            </button>
+
+            <button id="next-btn" class="deck-btn step" title="Next (N / →)">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="5 4 15 12 5 20 5 4"></polygon>
+                <line x1="19" y1="5" x2="19" y2="19"></line>
+              </svg>
+            </button>
+
+            <button id="repeat-btn" class="deck-btn sub" title="Loop Mode (L)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="17 1 21 5 17 9"></polyline>
+                <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+                <polyline points="7 23 3 19 7 15"></polyline>
+                <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+              </svg>
+              <span id="repeat-one-indicator" class="repeat-number hidden">1</span>
+            </button>
+          </div>
+
+          <!-- Bottom Sliders (Volume & Speed) -->
+          <div class="aux-bar">
+            <div class="aux-group volume-controls">
+              <button id="mute-btn" class="aux-icon-btn" title="Mute (M)">
+                <svg id="vol-high-icon" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                </svg>
+                <svg id="vol-mute-icon" class="hidden" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                  <line x1="23" y1="9" x2="17" y2="15"></line>
+                  <line x1="17" y1="9" x2="23" y2="15"></line>
+                </svg>
+              </button>
+              <div class="slider-track-wrap">
+                <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="0.8">
+              </div>
+              <span id="volume-percent" class="aux-readout">80%</span>
+            </div>
+
+            <div class="aux-group speed-controls">
+              <span class="aux-label">Speed:</span>
+              <select id="speed-select" class="speed-dropdown">
+                <option value="0.5">0.5×</option>
+                <option value="0.75">0.75×</option>
+                <option value="1" selected>1.0×</option>
+                <option value="1.25">1.25×</option>
+                <option value="1.5">1.5×</option>
+                <option value="2">2.0×</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW 2: EXPLORE & TRENDING ONLINE              -->
+      <!-- ============================================== -->
+      <section id="view-explore" class="tab-view">
+        <div class="explore-container">
+          <div class="section-intro">
+            <div>
+              <h2 class="view-title">🔥 Trending Online Hits</h2>
+              <p class="view-subtitle">Full-length streaming tracks powered by open decentralized music networks</p>
+            </div>
+            <button id="refresh-trending-btn" class="btn-action ghost" title="Refresh trending chart">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+              </svg>
+              <span>Refresh</span>
+            </button>
+          </div>
+
+          <!-- Genre Filter Pills -->
+          <div class="genre-ribbon" id="explore-genres">
+            <button class="genre-pill active" data-genre="all">✨ All Genres</button>
+            <button class="genre-pill" data-genre="Electronic">⚡ Electronic</button>
+            <button class="genre-pill" data-genre="Hip-Hop/Rap">🎤 Hip-Hop</button>
+            <button class="genre-pill" data-genre="Pop">🌟 Pop</button>
+            <button class="genre-pill" data-genre="Rock">🎸 Rock</button>
+            <button class="genre-pill" data-genre="Ambient">🌌 Ambient</button>
+            <button class="genre-pill" data-genre="Lo-Fi">☕ Lo-Fi Chill</button>
+          </div>
+
+          <!-- Results Grid -->
+          <div class="cards-grid" id="explore-results">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW 3: GLOBAL SEARCH ONLINE                   -->
+      <!-- ============================================== -->
+      <section id="view-search" class="tab-view">
+        <div class="search-container">
+          <div class="section-intro">
+            <div>
+              <h2 class="view-title">🔍 Search Online Music</h2>
+              <p class="view-subtitle">Search across millions of global artists, full songs & official studio previews</p>
+            </div>
+          </div>
+
+          <!-- Big Search Bar & Provider Toggles -->
+          <div class="search-hero">
+            <div class="search-bar">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="global-search-input" placeholder="Search song title, artist (e.g. Coldplay, Taylor Swift, Lo-Fi)...">
+              <button id="clear-search-btn" class="search-clear-btn hidden" title="Clear">✕</button>
+            </div>
+
+            <!-- Popular Quick-Search Suggestions -->
+            <div class="search-suggestions" id="search-suggestions">
+              <span class="suggestions-label">🔥 Quick Search:</span>
+              <button class="search-chip" data-query="Taylor Swift">Taylor Swift</button>
+              <button class="search-chip" data-query="Coldplay">Coldplay</button>
+              <button class="search-chip" data-query="The Weeknd">The Weeknd</button>
+              <button class="search-chip" data-query="Alan Walker">Alan Walker</button>
+              <button class="search-chip" data-query="Arijit Singh">Arijit Singh</button>
+              <button class="search-chip" data-query="Daft Punk">Daft Punk</button>
+              <button class="search-chip" data-query="Lo-Fi Chill Beats">Lo-Fi Beats</button>
+              <button class="search-chip" data-query="Synthwave Retro">Synthwave</button>
+            </div>
+
+            <div class="provider-switchers">
+              <span class="provider-label">Source:</span>
+              <button class="provider-pill active" data-source="audius">
+                <span>⚡ Full Songs (Audius)</span>
+              </button>
+              <button class="provider-pill" data-source="itunes">
+                <span>🌍 Global Hits (Apple Music / iTunes)</span>
+              </button>
+              <span class="cache-indicator" id="cache-indicator" title="Instant search caching enabled">⚡ Turbo Cached</span>
+            </div>
+          </div>
+
+          <!-- Search Results Grid -->
+          <div class="cards-grid" id="search-results">
+            <div class="empty-prompt">
+              <span class="empty-icon">🎧</span>
+              <h3>Find your next favorite song</h3>
+              <p>Type in an artist or song title above to search the global music catalog.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW 4: MY LIBRARY & PLAYLIST                  -->
+      <!-- ============================================== -->
+      <section id="view-library" class="tab-view">
+        <div class="library-container">
+          <div class="section-intro">
+            <div>
+              <h2 class="view-title">📑 My Music Library</h2>
+              <p class="view-subtitle">Your active playlist, saved online tracks, and imported local audio files</p>
+            </div>
+            <div class="library-actions-group">
+              <label for="library-file-input" class="btn-action gradient" title="Import audio files">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="17 8 12 3 7 8"></polyline>
+                  <line x1="12" y1="3" x2="12" y2="15"></line>
+                </svg>
+                <span>Import Files</span>
+              </label>
+              <input type="file" id="library-file-input" multiple accept="audio/*" style="display: none;">
+              <button id="reset-library-btn" class="btn-action ghost">Reset to Demo Tracks</button>
+            </div>
+          </div>
+
+          <!-- Quick Filter & Drag Drop Box -->
+          <div class="library-toolbar">
+            <div class="library-search-box">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="text" id="library-search-input" placeholder="Filter songs in library...">
+            </div>
+
+            <div class="drop-target" id="app-dropzone">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+              <span>Drag & drop audio files here (.mp3, .wav, .flac)</span>
+            </div>
+          </div>
+
+          <!-- Playlist Items Table / List -->
+          <div class="library-track-list" id="library-track-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================== -->
+      <!-- VIEW 5: LISTENING HISTORY                      -->
+      <!-- ============================================== -->
+      <section id="view-history" class="tab-view">
+        <div class="history-container">
+          <div class="view-header">
+            <div>
+              <h2 class="view-title">Listening History</h2>
+              <p class="view-subtitle">Chronological record of every song you have listened to.</p>
+            </div>
+            <div class="history-header-actions">
+              <button id="send-history-owner-btn" class="btn-action gradient" title="Compile and send your listening history to owner Sanjeet">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+                <span>Send History to Sanjeet (Owner)</span>
+              </button>
+              <button id="export-history-btn" class="btn-action ghost" title="Export listening history">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span>Export</span>
+              </button>
+              <button id="clear-history-btn" class="btn-action ghost danger" title="Clear all history">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+                <span>Clear</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- History Stats Bar -->
+          <div class="history-stats-grid">
+            <div class="history-stat-card">
+              <span class="stat-icon">🎧</span>
+              <div class="stat-info">
+                <span class="stat-val" id="hist-stat-count">0</span>
+                <span class="stat-label">Songs Heard</span>
+              </div>
+            </div>
+            <div class="history-stat-card">
+              <span class="stat-icon">⏱️</span>
+              <div class="stat-info">
+                <span class="stat-val" id="hist-stat-time">0m</span>
+                <span class="stat-label">Est. Listen Time</span>
+              </div>
+            </div>
+            <div class="history-stat-card">
+              <span class="stat-icon">🌟</span>
+              <div class="stat-info">
+                <span class="stat-val" id="hist-stat-fav">None</span>
+                <span class="stat-label">Top Genre</span>
+              </div>
+            </div>
+            <div class="history-stat-card">
+              <span class="stat-icon">👤</span>
+              <div class="stat-info">
+                <span class="stat-val" id="hist-stat-user">Guest</span>
+                <span class="stat-label">Current Listener</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- History Track List -->
+          <div class="history-track-list" id="history-track-list">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Page Footer at the Last Scroll -->
+      <footer class="app-scroll-footer">
+        <div class="scroll-footer-divider"></div>
+        <div class="scroll-footer-box">
+          <div class="scroll-footer-brand">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polygon points="6 3 20 12 6 21 6 3" fill="currentColor"></polygon>
+            </svg>
+            <span>Play <strong>Music</strong></span>
+          </div>
+          <p class="scroll-footer-creator">Created with ❤️ by <span class="creator-highlight">Sanjeet</span></p>
+          <p class="scroll-footer-sub">Crafted for music lovers worldwide • All rights reserved</p>
+        </div>
+      </footer>
+    </main>
+
+    <!-- Persistent Bottom Playback Dock -->
+    <footer class="bottom-dock" id="bottom-dock">
+      <div class="dock-left" id="dock-meta-click" title="Click to open Now Playing deck">
+        <div class="dock-thumb-wrap">
+          <img id="dock-thumb" class="dock-thumb hidden" alt="Artwork">
+          <div id="dock-emoji" class="dock-emoji">🎵</div>
+        </div>
+        <div class="dock-info">
+          <span id="dock-title" class="dock-title">Neon Horizon</span>
+          <span id="dock-artist" class="dock-artist">AuraSynth Collective</span>
+        </div>
+      </div>
+
+      <div class="dock-center">
+        <div class="dock-buttons">
+          <button id="dock-shuffle" class="dock-btn mini" title="Shuffle (S)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path>
+            </svg>
+          </button>
+          <button id="dock-prev" class="dock-btn" title="Previous (P)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="19 20 9 12 19 4 19 20"></polygon>
+              <line x1="5" y1="19" x2="5" y2="5"></line>
+            </svg>
+          </button>
+          <button id="dock-play" class="dock-btn play" title="Play / Pause (Space)">
+            <svg id="dock-play-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+            <svg id="dock-pause-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <rect x="6" y="4" width="4" height="16"></rect>
+              <rect x="14" y="4" width="4" height="16"></rect>
+            </svg>
+          </button>
+          <button id="dock-next" class="dock-btn" title="Next (N)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 4 15 12 5 20 5 4"></polygon>
+              <line x1="19" y1="5" x2="19" y2="19"></line>
+            </svg>
+          </button>
+          <button id="dock-repeat" class="dock-btn mini" title="Repeat Mode (L)">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="17 1 21 5 17 9"></polyline>
+              <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+              <polyline points="7 23 3 19 7 15"></polyline>
+              <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+            </svg>
+          </button>
+        </div>
+
+        <div class="dock-timeline">
+          <span id="dock-time-cur" class="dock-time">0:00</span>
+          <div class="dock-progress-bar" id="dock-progress-wrapper">
+            <div class="dock-progress-fill" id="dock-progress-fill"></div>
+          </div>
+          <span id="dock-time-tot" class="dock-time">0:00</span>
+        </div>
+      </div>
+
+      <div class="dock-right">
+        <span class="dock-creator-badge" title="Developer & Creator">Created by <strong>Sanjeet</strong></span>
+        <button id="dock-mute" class="aux-icon-btn mini" title="Mute (M)">
+          <svg id="dock-vol-high" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <svg id="dock-vol-mute" class="hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <line x1="23" y1="9" x2="17" y2="15"></line>
+            <line x1="17" y1="9" x2="23" y2="15"></line>
+          </svg>
+        </button>
+        <div class="dock-slider-wrap">
+          <input type="range" id="dock-vol-slider" min="0" max="1" step="0.01" value="0.8">
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <div class="modal-overlay hidden" id="keyboard-modal">
+    <div class="modal-card">
+      <div class="modal-top">
+        <h3>Keyboard Shortcuts</h3>
+        <button id="close-modal-btn" class="icon-action-btn">✕</button>
+      </div>
+      <div class="shortcuts-grid">
+        <div class="shortcut-item"><kbd>Space</kbd><span>Play / Pause</span></div>
+        <div class="shortcut-item"><kbd>→</kbd><span>Seek Forward 5s</span></div>
+        <div class="shortcut-item"><kbd>←</kbd><span>Seek Backward 5s</span></div>
+        <div class="shortcut-item"><kbd>↑</kbd><span>Volume Up (+5%)</span></div>
+        <div class="shortcut-item"><kbd>↓</kbd><span>Volume Down (-5%)</span></div>
+        <div class="shortcut-item"><kbd>M</kbd><span>Toggle Mute</span></div>
+        <div class="shortcut-item"><kbd>N</kbd><span>Next Track</span></div>
+        <div class="shortcut-item"><kbd>P</kbd><span>Previous Track</span></div>
+        <div class="shortcut-item"><kbd>S</kbd><span>Toggle Shuffle</span></div>
+        <div class="shortcut-item"><kbd>L</kbd><span>Toggle Loop Mode</span></div>
+        <div class="shortcut-item"><kbd>1 - 4</kbd><span>Switch Tabs</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contact Us Modal -->
+  <div class="modal-overlay hidden" id="contact-modal">
+    <div class="modal-card contact-modal-card">
+      <div class="modal-top">
+        <div class="contact-header-info">
+          <h3>Contact Us & Support</h3>
+          <p class="contact-sub">Have feedback or questions? Send a direct message to Sanjeet!</p>
+        </div>
+        <button id="close-contact-btn" class="icon-action-btn">✕</button>
+      </div>
+
+      <!-- Creator Bio Card -->
+      <div class="creator-profile-card">
+        <div class="creator-avatar">👨‍💻</div>
+        <div class="creator-details">
+          <h4>Sanjeet</h4>
+          <p class="creator-role">Lead Developer & Creator of <strong>Play Music</strong></p>
+          <span class="creator-status">🟢 Active & Building Next-Gen Web Apps</span>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <form id="contact-form" class="contact-form">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="contact-name">Your Name</label>
+            <input type="text" id="contact-name" placeholder="e.g. Alex" required>
+          </div>
+          <div class="form-group">
+            <label for="contact-email">Your Email</label>
+            <input type="email" id="contact-email" placeholder="alex@example.com" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="contact-topic">Reason for Message</label>
+          <select id="contact-topic" class="form-select">
+            <option value="feedback">🌟 General Feedback & Feature Love</option>
+            <option value="song-request">🎵 Song / Artist Request</option>
+            <option value="bug">🐛 Report a Bug / Audio Glitch</option>
+            <option value="collab">🤝 Project Collaboration</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="contact-message">Message</label>
+          <textarea id="contact-message" rows="3" placeholder="Tell Sanjeet your ideas, song suggestions, or thoughts..." required></textarea>
+        </div>
+
+        <button type="submit" class="btn-action gradient submit-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+          <span>Send Message to Sanjeet</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: USER AUTHENTICATION & PROFILE           -->
+  <!-- ============================================== -->
+  <div id="auth-modal" class="modal-overlay hidden">
+    <div class="modal-card auth-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">🔐</span>
+          <h3 id="auth-modal-title">Sign In to Play Music</h3>
+        </div>
+        <button id="close-auth-modal-btn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <!-- Guest / Logged-in Profile Switcher -->
+      <div id="auth-form-container">
+        <!-- Auth Tabs: Login vs Register -->
+        <div class="auth-tabs">
+          <button id="tab-login-btn" class="auth-tab active" type="button">Log In</button>
+          <button id="tab-register-btn" class="auth-tab" type="button">Create Account</button>
+        </div>
+
+        <form id="auth-form" class="auth-form">
+          <div id="auth-name-group" class="form-group hidden">
+            <label for="auth-name">Your Full Name</label>
+            <input type="text" id="auth-name" placeholder="e.g. Alex Rivera">
+          </div>
+
+          <div class="form-group">
+            <label for="auth-email">Email Address</label>
+            <input type="email" id="auth-email" placeholder="alex@example.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="auth-password">Password</label>
+            <input type="password" id="auth-password" placeholder="••••••••" required>
+          </div>
+
+          <!-- Owner notification auto-dispatch notice -->
+          <div class="owner-notify-notice">
+            <span class="live-dot pulse"></span>
+            <span>⚡ Automated Owner Alert: When you sign in, your login details are notified to <strong>Sanjeet</strong>.</span>
+          </div>
+
+          <button type="submit" id="auth-submit-btn" class="btn-action gradient full-width">
+            <span>Log In & Start Listening</span>
+          </button>
+
+          <div class="auth-divider"><span>OR</span></div>
+
+          <button type="button" id="guest-login-btn" class="btn-action ghost full-width">
+            <span>Continue as Guest</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Logged-In Profile Card (shown when user is authenticated) -->
+      <div id="auth-profile-container" class="hidden">
+        <div class="profile-card">
+          <div class="profile-avatar-large" id="profile-avatar">👤</div>
+          <div class="profile-details">
+            <h4 id="profile-name">Alex Rivera</h4>
+            <p id="profile-email">alex@example.com</p>
+            <span class="user-badge-online">🟢 Active Session</span>
+          </div>
+        </div>
+
+        <div class="profile-stats">
+          <div class="profile-stat-box">
+            <span class="pstat-val" id="profile-songs-count">0</span>
+            <span class="pstat-label">Songs Heard</span>
+          </div>
+          <div class="profile-stat-box">
+            <span class="pstat-val" id="profile-login-time">Just now</span>
+            <span class="pstat-label">Last Login</span>
+          </div>
+        </div>
+
+        <div class="profile-actions">
+          <button id="profile-send-history-btn" class="btn-action gradient full-width">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            <span>Send My Listening History to Sanjeet</span>
+          </button>
+          <button id="logout-btn" class="btn-action ghost danger full-width">
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: OWNER ADMIN & NOTIFICATION CENTER       -->
+  <!-- ============================================== -->
+  <div id="owner-modal" class="modal-overlay hidden">
+    <div class="modal-card owner-modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">👑</span>
+          <div>
+            <h3>Owner Notification Center</h3>
+            <p class="modal-sub">Real-time user login alerts & history dispatches for <strong>Sanjeet</strong></p>
+          </div>
+        </div>
+        <button id="close-owner-modal-btn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <!-- Owner Config Section -->
+      <div class="owner-config-box">
+        <div class="owner-email-row">
+          <label for="owner-email-input">Owner Email for Notifications:</label>
+          <div class="owner-input-wrap">
+            <input type="email" id="owner-email-input" value="sanjeet.playmusic@gmail.com" placeholder="sanjeet@example.com">
+            <button id="save-owner-email-btn" class="btn-action ghost mini">Save</button>
+          </div>
+        </div>
+        <p class="owner-note">Whenever a user logs in, their name, email, timestamp, and device details are recorded here and dispatched to this address.</p>
+      </div>
+
+      <!-- Owner Alerts List -->
+      <div class="owner-alerts-header">
+        <h4>User Activity & Login Alerts (<span id="owner-alerts-count-text">0</span>)</h4>
+        <button id="clear-owner-alerts-btn" class="btn-action ghost mini danger">Clear Alerts</button>
+      </div>
+
+      <div id="owner-alerts-list" class="owner-alerts-list">
+        <!-- Dynamically populated login alerts -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================== -->
+  <!-- MODAL: SEND LISTENING HISTORY TO OWNER         -->
+  <!-- ============================================== -->
+  <div id="send-history-modal" class="modal-overlay hidden">
+    <div class="modal-card send-history-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-icon">📤</span>
+          <div>
+            <h3>Send Listening History to Sanjeet</h3>
+            <p class="modal-sub">Transmits your complete playback history & statistics directly to the owner.</p>
+          </div>
+        </div>
+        <button id="close-send-history-btn" class="modal-close-btn">&times;</button>
+      </div>
+
+      <!-- Preview Box -->
+      <div class="report-preview-box">
+        <div class="report-preview-header">
+          <span>📋 History Report Preview</span>
+          <span id="report-song-count-tag" class="tag-pill accent">0 Songs</span>
+        </div>
+        <pre id="history-report-preview" class="report-text"></pre>
+      </div>
+
+      <div class="report-actions">
+        <button id="dispatch-report-btn" class="btn-action gradient">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+          <span>Confirm & Send to Sanjeet</span>
+        </button>
+
+        <a id="email-client-link" href="#" class="btn-action ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          <span>Open in Email App</span>
+        </a>
+
+        <button id="copy-report-btn" class="btn-action ghost">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          <span>Copy Report</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Audio Element -->
+  <audio id="audio-player" crossorigin="anonymous" preload="auto"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>
 
