@@ -1,8 +1,8 @@
-// ============================================================================
+// 
 // SNAPDRAGON SMART VISION ASSISTANT — 100% PURE C++ NATIVE EDITION
 // ZERO EXTERNAL DEPENDENCIES (NO OPENCV, NO VCPKG, NO PYTHON REQUIRED)
 // Compiles directly on any Windows PC with standard MSVC: cl.exe /EHsc
-// ============================================================================
+// 
  
 
 //code by sanjeet with help of external tools
