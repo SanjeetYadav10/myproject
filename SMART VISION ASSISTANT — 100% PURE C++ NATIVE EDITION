@@ -5,7 +5,7 @@
 // 
  
 
-//code by sanjeet with help of external tools
+
 
 //Your Smart Vision Assistant is basically a computer-vision assistant that looks at a workspace, detects objects, understands what is happening, and gives information through the screen and voice.
 //Camera → Object Detection → Scene Understanding → Voice + Visual Output
